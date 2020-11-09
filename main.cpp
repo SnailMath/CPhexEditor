@@ -4,6 +4,19 @@
 #include <sdk/os/lcd.hpp>
 #include <sdk/os/mem.hpp>
 
+/* This program was written by SnailMath for the claculator classpad II.
+ * This is a simple hex editor.
+ * You can type in an address and click on go
+ * The data you see is read in bytes, if you want to read addresses, that can only
+ * accessed as a word, type any 4 digits in the command line and press read to read
+ * as a word or type 8 digits and presss read to read as a long. The read data will
+ * be displayed in the command line.
+ * To write to a location type 2, 4 or 8 digits in the command line and type write.
+ *
+ * This is based on the app_template from the hollyhock project by The6P4C, the
+ * fork by Stellaris-code to be precise.
+ */
+
 //Der Bildschirm ist 53 zeichen breit, als 0-52.
 
 
