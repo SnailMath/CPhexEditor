@@ -1,4 +1,6 @@
 # CPhexEditor
+_click on "CPhexEditor_V-1.0.0 Latest" on the right side of the screen to download the executable. -->_
+
 Simple hex-editor for the classpad 2 for hollyhock
 
 This is based on the template https://github.com/Stellaris-code/hollyhock-fork/tree/master/app_template 
