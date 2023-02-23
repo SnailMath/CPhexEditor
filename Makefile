@@ -1,9 +1,6 @@
-# This file is based on the makefile from the hollyhock project, written by The6P4C, forked by Stellaris-code. The original can be found here:
-# Stellaris-code/hollyhock-fork/app_template/Makefile
-# The original file is under the GNU license, so this file has to be under this license, too
-
-
-APP_NAME:=hexEditor01
+# run `make all` to compile the .hhk and .bin file, use `make` to compile only the .bin file.
+# The .hhk file is the original format, the bin file is a newer format.
+APP_NAME:=HexEditor
 
 ifndef SDK_DIR
 $(error You need to define the SDK_DIR environment variable, and point it to the sdk/ folder)
@@ -16,7 +13,7 @@ CC:=sh4-elf-gcc
 CC_FLAGS:=-ffreestanding -fshort-wchar -Wall -Wextra -O2 -I $(SDK_DIR)/include/
 
 CXX:=sh4-elf-g++
-CXX_FLAGS:=-ffreestanding -fno-exceptions -fno-rtti -fshort-wchar -Wall -Wextra -O2 -I $(SDK_DIR)/include/
+CXX_FLAGS:=-ffreestanding -fno-exceptions -fno-rtti -fshort-wchar -Wall -Wextra -O2 -I $(SDK_DIR)/include/ -m4a-nofpu
 
 LD:=sh4-elf-ld
 LD_FLAGS:=-nostdlib --no-undefined
@@ -30,18 +27,26 @@ CXX_SOURCES:=$(wildcard *.cpp)
 OBJECTS:=$(AS_SOURCES:.s=.o) $(CC_SOURCES:.c=.o) $(CXX_SOURCES:.cpp=.o)
 
 APP_ELF:=$(APP_NAME).hhk
+APP_BIN:=$(APP_NAME).bin
 
-all: $(APP_ELF) Makefile
+bin: $(APP_BIN) Makefile
+
+hhk: $(APP_ELF) Makefile
+
+all: $(APP_ELF) $(APP_BIN) Makefile
 
 clean:
-	rm -f $(OBJECTS) $(APP_ELF)
+	rm -f $(OBJECTS) $(APP_ELF) $(APP_BIN)
 
-$(APP_ELF): $(OBJECTS) $(SDK_DIR)/sdk.o linker.ld
-	$(LD) -T linker.ld -o $@ $(LD_FLAGS) $(OBJECTS) $(SDK_DIR)/sdk.o
+$(APP_ELF): $(OBJECTS) $(SDK_DIR)/sdk.o linker_hhk.ld
+	$(LD) -T linker_hhk.ld -o $@ $(LD_FLAGS) $(OBJECTS) $(SDK_DIR)/sdk.o
 	$(OBJCOPY) --set-section-flags .hollyhock_name=contents,strings,readonly $(APP_ELF) $(APP_ELF)
 	$(OBJCOPY) --set-section-flags .hollyhock_description=contents,strings,readonly $(APP_ELF) $(APP_ELF)
 	$(OBJCOPY) --set-section-flags .hollyhock_author=contents,strings,readonly $(APP_ELF) $(APP_ELF)
 	$(OBJCOPY) --set-section-flags .hollyhock_version=contents,strings,readonly $(APP_ELF) $(APP_ELF)
+
+$(APP_BIN): $(OBJECTS) $(SDK_DIR)/sdk.o linker_bin.ld
+	$(LD) --oformat binary -T linker_bin.ld -o $@ $(LD_FLAGS) $(OBJECTS) $(SDK_DIR)/sdk.o
 
 # We're not actually building sdk.o, just telling the user they need to do it
 # themselves. Just using the target to trigger an error when the file is
@@ -64,4 +69,4 @@ $(SDK_DIR)/sdk.o:
 	$(CXX) -c $< -o $@ $(CXX_FLAGS)
 	@$(READELF) $@ -S | grep ".ctors" > /dev/null && echo "ERROR: Global constructors aren't supported." && rm $@ && exit 1 || exit 0
 
-.PHONY: all clean
+.PHONY: bin hhk all clean

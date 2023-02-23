@@ -29,8 +29,8 @@ APP_VERSION("1.0.0")
 
 #define PIXEL(x, y) (vram[(x) + (y) * width])
 #define mem_ch(x) numToAscii[memory[x]]
-int width, height;
-uint16_t *vram;
+extern int width, height;
+extern uint16_t *vram;
 unsigned char numToAscii[257]= "................................ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~.................................................................................................................................";
 #define underlineLeft(x) ((x<4)?(18+(18*x)):(24+(18*x)))
 #define underlineLeftAscii(x) ((x<4)?(174+(6*x)):(180+(6*x)))
